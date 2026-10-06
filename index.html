@@ -1,0 +1,1443 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Quest 9: Unforgettable Journeys</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0284c7',
+                            600: '#0369a1',
+                            700: '#094e70',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            user-select: none; /* Disable text selection for anti-cheat */
+            -webkit-user-select: none;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes pulse-fast {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+        .animate-pulse-fast {
+            animation: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col justify-between antialiased">
+
+    <!-- ==================== TOP BAR / HEADER ==================== -->
+    <header id="main-header" class="bg-indigo-700 text-white shadow-lg sticky top-0 z-30">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/20 p-2 rounded-xl backdrop-blur-md">
+                    <i class="fa-solid fa-compass-drafting text-2xl text-yellow-300"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg md:text-xl tracking-wide leading-tight">English Quest 9</h1>
+                    <p class="text-xs text-indigo-200">Fase D - Unit 3: Unforgettable Journeys</p>
+                </div>
+            </div>
+
+            <!-- Quiz Status Info (Hidden initially) -->
+            <div id="quiz-status-bar" class="hidden flex items-center space-x-4">
+                <!-- Cheating Counter -->
+                <div id="violation-badge" class="bg-amber-500/20 text-amber-200 border border-amber-400/40 px-3 py-1 rounded-full text-xs font-semibold flex items-center space-x-1">
+                    <i class="fa-solid fa-triangle-exclamation text-amber-300"></i>
+                    <span>Pelanggaran: <span id="violation-count">0</span>/3</span>
+                </div>
+
+                <!-- Timer Display -->
+                <div class="bg-white/10 px-3 py-1.5 rounded-xl border border-white/20 flex items-center space-x-2">
+                    <i class="fa-solid fa-stopwatch text-indigo-300 text-sm"></i>
+                    <span id="timer-display" class="font-mono font-bold text-base text-yellow-300">60:00</span>
+                </div>
+            </div>
+
+            <!-- GAS Script Button -->
+            <button onclick="toggleGasModal(true)" class="bg-indigo-800 hover:bg-indigo-900 text-xs font-semibold px-3 py-1.5 rounded-lg border border-indigo-500/50 flex items-center space-x-1.5 transition">
+                <i class="fa-solid fa-code text-indigo-300"></i>
+                <span class="hidden sm:inline">Kode GS (Google Sheet)</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ==================== MAIN CONTENT CONTAINER ==================== -->
+    <main class="max-w-6xl w-full mx-auto p-4 flex-grow flex flex-col justify-center">
+
+        <!-- ==================== SCREEN 1: LOGIN & START ==================== -->
+        <section id="login-screen" class="bg-white rounded-3xl shadow-xl border border-slate-200/80 p-6 md:p-10 max-w-xl mx-auto w-full my-6 relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-100 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-sky-100 rounded-full blur-2xl pointer-events-none"></div>
+
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-tr from-indigo-500 to-sky-400 text-white rounded-2xl shadow-lg mb-3">
+                    <i class="fa-solid fa-user-graduate text-2xl"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-slate-800">Latihan Soal Interaktif</h2>
+                <p class="text-sm text-slate-500 mt-1">Masukkan identitas dan Passcode ujian untuk memulai</p>
+            </div>
+
+            <form id="login-form" onsubmit="handleStartQuiz(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Nama Lengkap Siswa</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-id-card absolute left-3.5 top-3 text-slate-400"></i>
+                        <input type="text" id="input-nama" required placeholder="Contoh: Budi Santoso" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Kelas</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-school absolute left-3.5 top-3 text-slate-400"></i>
+                            <select id="input-kelas" required class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm bg-white">
+                                <option value="" disabled selected>Pilih Kelas</option>
+                                <option value="9A">Kelas 9A</option>
+                                <option value="9B">Kelas 9B</option>
+                                <option value="9C">Kelas 9C</option>
+                                <option value="9D">Kelas 9D</option>
+                                <option value="9E">Kelas 9E</option>
+                                <option value="9F">Kelas 9F</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-slate-600 uppercase tracking-wider mb-1">Passcode Ujian</label>
+                        <div class="relative">
+                            <i class="fa-solid fa-key absolute left-3.5 top-3 text-slate-400"></i>
+                            <input type="password" id="input-passcode" required placeholder="Masukkan Passcode" class="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition text-sm">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rules Box -->
+                <div class="bg-indigo-50/70 rounded-2xl p-4 border border-indigo-100 text-xs text-indigo-900 space-y-1.5 mt-2">
+                    <div class="font-bold text-indigo-950 flex items-center space-x-1.5">
+                        <i class="fa-solid fa-shield-halved text-indigo-600"></i>
+                        <span>Aturan Ketat Asesmen:</span>
+                    </div>
+                    <ul class="list-disc list-inside space-y-1 text-slate-600 pl-1">
+                        <li>Waktu pengerjaan keseluruhan: <strong>60 Menit</strong>.</li>
+                        <li>Soal terdiri dari <strong>30 Pilihan Ganda</strong>.</li>
+                        <li>Dilarang berpindah tab/keluar dari jendela aplikasi.</li>
+                        <li>Batas maksimal pelanggaran kecurangan: <strong>3 Kali</strong>. Jika melebihi, tes akan dihentikan otomatis.</li>
+                    </ul>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-gradient-to-r from-indigo-600 to-sky-600 hover:from-indigo-700 hover:to-sky-700 text-white font-bold rounded-xl shadow-lg hover:shadow-indigo-500/25 transition transform active:scale-95 flex items-center justify-center space-x-2">
+                    <span>Mulai Mengerjakan</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </section>
+
+        <!-- ==================== SCREEN 2: INTERACTIVE QUIZ ==================== -->
+        <section id="quiz-screen" class="hidden space-y-4 my-2">
+            
+            <!-- Top Controls & Progress Bar -->
+            <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-200 flex flex-col md:flex-row md:items-center justify-between gap-3">
+                <div class="flex items-center justify-between w-full md:w-auto space-x-4">
+                    <span class="text-sm font-bold text-slate-700 flex items-center space-x-2">
+                        <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg text-xs">Soal <span id="current-q-num">1</span> dari 30</span>
+                    </span>
+                    <span id="question-difficulty-tag" class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600">
+                        Mudah | LOTS
+                    </span>
+                </div>
+
+                <!-- Progress Bar -->
+                <div class="w-full md:w-64 bg-slate-100 h-2.5 rounded-full overflow-hidden border border-slate-200">
+                    <div id="progress-bar-fill" class="bg-indigo-600 h-full transition-all duration-300" style="width: 3.33%;"></div>
+                </div>
+
+                <!-- Palette Toggle Button -->
+                <button onclick="togglePaletteModal(true)" class="bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold px-3 py-2 rounded-xl transition flex items-center justify-center space-x-2">
+                    <i class="fa-solid fa-border-all"></i>
+                    <span>Daftar Soal</span>
+                </button>
+            </div>
+
+            <!-- Question Card -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                
+                <!-- Left/Top Column: Reading Passage / Context Dialogue -->
+                <div class="lg:col-span-6 bg-white p-5 rounded-3xl shadow-sm border border-slate-200 flex flex-col justify-between max-h-[500px] overflow-y-auto custom-scrollbar">
+                    <div>
+                        <div class="flex items-center justify-between border-b border-slate-100 pb-2 mb-3">
+                            <span class="text-xs font-bold text-indigo-600 uppercase tracking-wider flex items-center space-x-1">
+                                <i class="fa-solid fa-file-lines"></i>
+                                <span>Teks / Dialog Acuan</span>
+                            </span>
+                            <span class="text-[11px] text-slate-400">Bacalah dengan teliti</span>
+                        </div>
+
+                        <!-- Image Container (If exists) -->
+                        <div id="q-image-container" class="hidden mb-3 text-center">
+                            <img id="q-image" src="" alt="Soal Illustration" class="max-h-48 rounded-xl mx-auto shadow-sm border border-slate-200 object-cover">
+                        </div>
+
+                        <!-- Dialogue/Text Content -->
+                        <div id="q-text-context" class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-sm leading-relaxed text-slate-700 italic font-sans whitespace-pre-line">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Question Text & Options -->
+                <div class="lg:col-span-6 bg-white p-5 rounded-3xl shadow-sm border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="border-b border-slate-100 pb-2 mb-3">
+                            <h3 id="q-prompt" class="font-bold text-slate-800 text-base md:text-lg leading-snug">
+                                <!-- Injected dynamically -->
+                            </h3>
+                        </div>
+
+                        <!-- Options Box -->
+                        <div id="options-container" class="space-y-2.5 my-4">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Navigation Buttons -->
+                    <div class="pt-4 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <button id="btn-prev" onclick="navigateQuestion(-1)" class="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition flex items-center space-x-1 disabled:opacity-40">
+                            <i class="fa-solid fa-chevron-left text-xs"></i>
+                            <span>Sebelumnya</span>
+                        </button>
+
+                        <button id="btn-next" onclick="navigateQuestion(1)" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm shadow-md transition flex items-center space-x-1">
+                            <span>Selanjutnya</span>
+                            <i class="fa-solid fa-chevron-right text-xs"></i>
+                        </button>
+
+                        <button id="btn-finish" onclick="confirmFinishQuiz()" class="hidden px-5 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-sm shadow-md transition flex items-center space-x-1">
+                            <i class="fa-solid fa-check-circle"></i>
+                            <span>Selesai & Kirim</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ==================== SCREEN 3: RESULT & SCORE ==================== -->
+        <section id="result-screen" class="hidden bg-white rounded-3xl shadow-xl border border-slate-200/80 p-6 md:p-10 max-w-3xl mx-auto w-full my-6">
+            <div class="text-center pb-6 border-b border-slate-100">
+                <div id="score-badge-icon" class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-emerald-100 text-emerald-600 text-3xl mb-3">
+                    <i class="fa-solid fa-award"></i>
+                </div>
+                <h2 class="text-3xl font-extrabold text-slate-800">Hasil Asesmen Anda</h2>
+                <p class="text-sm text-slate-500 mt-1">Ujian telah selesai dikerjakan dan dicatat.</p>
+            </div>
+
+            <!-- Score Summary Cards -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 my-6 text-center">
+                <div class="bg-indigo-50 border border-indigo-100 p-3 rounded-2xl">
+                    <span class="text-xs text-indigo-600 font-semibold uppercase block">Skor Akhir</span>
+                    <span id="final-score-val" class="text-3xl font-extrabold text-indigo-700">0</span>
+                </div>
+                <div class="bg-emerald-50 border border-emerald-100 p-3 rounded-2xl">
+                    <span class="text-xs text-emerald-600 font-semibold uppercase block">Jawaban Benar</span>
+                    <span id="final-correct-val" class="text-3xl font-extrabold text-emerald-700">0</span>
+                </div>
+                <div class="bg-rose-50 border border-rose-100 p-3 rounded-2xl">
+                    <span class="text-xs text-rose-600 font-semibold uppercase block">Jawaban Salah</span>
+                    <span id="final-wrong-val" class="text-3xl font-extrabold text-rose-700">0</span>
+                </div>
+                <div class="bg-amber-50 border border-amber-100 p-3 rounded-2xl">
+                    <span class="text-xs text-amber-600 font-semibold uppercase block">Pelanggaran</span>
+                    <span id="final-violations-val" class="text-3xl font-extrabold text-amber-700">0</span>
+                </div>
+            </div>
+
+            <!-- Student Info Summary -->
+            <div class="bg-slate-50 p-4 rounded-2xl border border-slate-200 text-sm space-y-1 mb-6">
+                <div class="flex justify-between"><span class="text-slate-500">Nama Siswa:</span><span id="res-student-name" class="font-bold text-slate-800">-</span></div>
+                <div class="flex justify-between"><span class="text-slate-500">Kelas:</span><span id="res-student-class" class="font-bold text-slate-800">-</span></div>
+                <div class="flex justify-between"><span class="text-slate-500">Nomor Soal Salah:</span><span id="res-wrong-list" class="font-bold text-rose-600">-</span></div>
+                <div class="flex justify-between items-center pt-2 border-t border-slate-200">
+                    <span class="text-slate-500">Status Google Apps Script (GAS):</span>
+                    <span id="gas-sync-status" class="text-xs font-bold px-2.5 py-1 rounded-full bg-slate-200 text-slate-700">Menghubungkan...</span>
+                </div>
+            </div>
+
+            <!-- Wrong Questions Detailed Review Accordion -->
+            <div class="mb-6">
+                <h4 class="font-bold text-slate-800 text-sm mb-3 flex items-center space-x-2">
+                    <i class="fa-solid fa-magnifying-glass text-indigo-600"></i>
+                    <span>Pembahasan Soal Yang Perlu Dipelajari Kembali</span>
+                </h4>
+                <div id="wrong-questions-review" class="space-y-3 max-h-80 overflow-y-auto custom-scrollbar pr-1">
+                    <!-- Injected dynamically -->
+                </div>
+            </div>
+
+            <button onclick="location.reload()" class="w-full py-3 bg-slate-800 hover:bg-slate-900 text-white font-bold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                <i class="fa-solid fa-rotate-right"></i>
+                <span>Kembali ke Halaman Awal</span>
+            </button>
+        </section>
+
+    </main>
+
+    <!-- ==================== MODAL: QUESTION PALETTE ==================== -->
+    <div id="palette-modal" class="hidden fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-md w-full p-6 space-y-4">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="font-bold text-slate-800 text-lg">Navigasi Soal</h3>
+                <button onclick="togglePaletteModal(false)" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+            
+            <p class="text-xs text-slate-500">Klik nomor soal untuk berpindah secara cepat:</p>
+
+            <div id="palette-grid" class="grid grid-cols-5 gap-2 max-h-60 overflow-y-auto p-1 custom-scrollbar">
+                <!-- 30 buttons injected dynamically -->
+            </div>
+
+            <div class="flex items-center justify-end pt-3 border-t">
+                <button onclick="togglePaletteModal(false)" class="px-4 py-2 bg-indigo-600 text-white rounded-xl text-xs font-bold">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== MODAL: GOOGLE APPS SCRIPT (GAS) CONFIG & CODE ==================== -->
+    <div id="gas-modal" class="hidden fixed inset-0 z-50 bg-slate-900/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-2xl w-full p-6 space-y-4 max-h-[90vh] flex flex-col">
+            <div class="flex items-center justify-between border-b pb-3">
+                <h3 class="font-bold text-slate-800 text-lg flex items-center space-x-2">
+                    <i class="fa-solid fa-table-cells text-emerald-600"></i>
+                    <span>Konfigurasi Google Apps Script (GAS)</span>
+                </h3>
+                <button onclick="toggleGasModal(false)" class="text-slate-400 hover:text-slate-600 text-xl font-bold">&times;</button>
+            </div>
+
+            <div class="overflow-y-auto space-y-4 custom-scrollbar pr-2 flex-grow text-xs text-slate-600 leading-relaxed">
+                <!-- Instructions -->
+                <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-amber-900">
+                    <strong>Petunjuk Guru / Penguji:</strong>
+                    <ol class="list-decimal list-inside space-y-1 mt-1">
+                        <li>Buat Spreadsheet baru di <strong>Google Sheets</strong>.</li>
+                        <li>Klik menu <strong>Extensions (Ekstensi) &gt; Apps Script</strong>.</li>
+                        <li>Hapus seluruh kode yang ada, lalu **salin dan tempel kode GS** di bawah ini.</li>
+                        <li>Klik **Deploy (Terapkan) &gt; New deployment (Terapkan baru)**.</li>
+                        <li>Pilih type: **Web App**, set *Who has access*: **Anyone (Siapa saja)**.</li>
+                        <li>Salin **Web App URL** yang dihasilkan, lalu tempel pada variabel <code>GAS_WEB_APP_URL</code> di dalam kode HTML file ini (baris script JavaScript).</li>
+                    </ol>
+                </div>
+
+                <!-- Input for Quick Setup -->
+                <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 space-y-2">
+                    <label class="block font-bold text-slate-700">Sematkan URL Web App GAS Anda Disini:</label>
+                    <input type="url" id="input-gas-url-modal" placeholder="https://script.google.com/macros/s/AKfycb.../exec" class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-indigo-500 font-mono text-xs">
+                    <button onclick="saveGasUrlFromModal()" class="px-3 py-1.5 bg-indigo-600 text-white font-bold rounded-lg hover:bg-indigo-700 transition">Simpan URL ke Aplikasi</button>
+                </div>
+
+                <!-- Code Block -->
+                <div>
+                    <label class="block font-bold text-slate-700 mb-1">Kode Apps Script (Code.gs):</label>
+                    <pre class="bg-slate-900 text-emerald-400 p-4 rounded-xl font-mono text-[11px] overflow-x-auto select-all leading-tight"><code>// ===================================================
+// KODE GOOGLE APPS SCRIPT (Code.gs)
+// Salin seluruh kode ini ke Apps Script Google Sheets
+// ===================================================
+
+function doPost(e) {
+  var lock = LockService.getScriptLock();
+  lock.tryLock(10000);
+  
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    
+    // Buat header jika sheet masih kosong
+    if (sheet.getLastRow() === 0) {
+      sheet.appendRow([
+        "Timestamp", 
+        "Nama Siswa", 
+        "Kelas", 
+        "Jawaban Benar", 
+        "Jawaban Salah", 
+        "Skor Akhir", 
+        "Jumlah Pelanggaran", 
+        "Nomor Soal Salah"
+      ]);
+    }
+    
+    var data = JSON.parse(e.postData.contents);
+    
+    sheet.appendRow([
+      data.timestamp || new Date().toLocaleString("id-ID"),
+      data.nama,
+      data.kelas,
+      data.benar,
+      data.salah,
+      data.skor,
+      data.pelanggaran,
+      data.soalSalah
+    ]);
+    
+    return ContentService
+      .createTextOutput(JSON.stringify({"result": "success"}))
+      .setMimeType(ContentService.MimeType.JSON);
+      
+  } catch (err) {
+    return ContentService
+      .createTextOutput(JSON.stringify({"result": "error", "error": err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } finally {
+    lock.releaseLock();
+  }
+}
+</code></pre>
+                </div>
+            </div>
+
+            <div class="pt-3 border-t flex justify-end">
+                <button onclick="toggleGasModal(false)" class="px-4 py-2 bg-slate-200 hover:bg-slate-300 font-bold text-slate-700 rounded-xl text-xs">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <footer class="bg-white border-t border-slate-200 py-3 text-center text-xs text-slate-500">
+        <p>&copy; 2026 Bahasa Inggris Kelas 9 (Fase D) - Kurikulum Merdeka. Unforgettable Journeys.</p>
+    </footer>
+
+    <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+    <script>
+        
+        // =========================================================================
+        // 1. PENGATURAN UTAMA & KONFIGURASI GURU
+        // =========================================================================
+        // SISIPKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI KETIKAN STRING DI BAWAH INI:
+        let GAS_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyxxR7f7QfqEGjBs3w2nwO8dEBuW8_rqZQ1wnMgN9oQhzdnPGkov5sOYl_mRhAhbhtqZQ/exec";
+        
+        // PASSCODE DEFAULT UNTUK MASUK KE GAME / UJIAN
+        const SYSTEM_PASSCODE = "SMP2026"; 
+
+        // TOTAL WAKTU PENGERJAAN DALAM DETIK (60 MENIT = 3600 DETIK)
+        const TOTAL_QUIZ_TIME = 3600; 
+
+        // =========================================================================
+        // 2. DATA 30 SOAL LENGKAP (AUTHENTIC TEXTS, RECOUNT, PAST CONTINUOUS)
+        // =========================================================================
+        const questionsData = [
+            // ---------- SPOKEN RECOUNT TEXTS (Soal 1 - 10) ----------
+            {
+                id: 1,
+                topic: "Spoken Recount Texts",
+                difficulty: "Easy",
+                cognitive: "LOTS",
+                context: "Dialogue 1:\nSiti: 'Hi Edo! How was your trip to Wakatobi last holiday?'\nEdo: 'It was breathtaking! While we were snorkeling near the coral reef, my brother accidentally dropped his underwater camera.'\nSiti: 'Oh no! Did he get it back?'\nEdo: 'Luckily, a friendly local diver saw it falling and retrieved it for us.'",
+                imageUrl: "", // Tempat URL Gambar Soal (Opsional)
+                prompt: "Where did Edo and his family go on holiday?",
+                options: [
+                    "Wakatobi",
+                    "Raja Ampat",
+                    "Bunaken",
+                    "Bali"
+                ],
+                answer: 0,
+                explanation: "Berdasarkan dialog, Edo mengatakan: 'Hi Edo! How was your trip to Wakatobi last holiday?' - 'It was breathtaking!'."
+            },
+            {
+                id: 2,
+                topic: "Spoken Recount Texts",
+                difficulty: "Medium",
+                cognitive: "LOTS",
+                context: "Dialogue 1:\nSiti: 'Hi Edo! How was your trip to Wakatobi last holiday?'\nEdo: 'It was breathtaking! While we were snorkeling near the coral reef, my brother accidentally dropped his underwater camera.'\nSiti: 'Oh no! Did he get it back?'\nEdo: 'Luckily, a friendly local diver saw it falling and retrieved it for us.'",
+                imageUrl: "",
+                prompt: "What was Edo doing when his brother dropped the underwater camera?",
+                options: [
+                    "He was eating seafood on the boat.",
+                    "He was snorkeling near the coral reef.",
+                    "He was swimming back to the shore.",
+                    "He was talking to a local diver."
+                ],
+                answer: 1,
+                explanation: "Edo menjelaskan kejadian dengan kalimat: 'While we were snorkeling near the coral reef, my brother accidentally dropped his underwater camera.'"
+            },
+            {
+                id: 3,
+                topic: "Spoken Recount Texts",
+                difficulty: "Hard",
+                cognitive: "HOTS",
+                context: "Dialogue 1:\nSiti: 'Hi Edo! How was your trip to Wakatobi last holiday?'\nEdo: 'It was breathtaking! While we were snorkeling near the coral reef, my brother accidentally dropped his underwater camera.'\nSiti: 'Oh no! Did he get it back?'\nEdo: 'Luckily, a friendly local diver saw it falling and retrieved it for us.'",
+                imageUrl: "",
+                prompt: "From the spoken dialogue, what can we infer about the local diver?",
+                options: [
+                    "He was careless and ignored Edo's brother.",
+                    "He was helpful and observant under water.",
+                    "He asked for money to retrieve the camera.",
+                    "He was snorkeling with Siti's family."
+                ],
+                answer: 1,
+                explanation: "Penyelam lokal mengembalikan kamera yang jatuh, menunjukkan ia sangat membantu (helpful) dan peka/pengamat yang baik (observant)."
+            },
+            {
+                id: 4,
+                topic: "Spoken Recount Texts",
+                difficulty: "Easy",
+                cognitive: "LOTS",
+                context: "Dialogue 2 (Podcast Transcript):\nHost: 'Welcome back! Today, Lina is telling us about her journey to Mount Bromo.'\nLina: 'We woke up at 3:00 AM to catch the sunrise. While we were walking up the steep trail, the cold wind was blowing fiercely. However, when the sun finally rose above the horizon, the view was unforgettable!'",
+                imageUrl: "",
+                prompt: "Why did Lina and her team wake up at 3:00 AM?",
+                options: [
+                    "To prepare breakfast at the campsite.",
+                    "To catch the beautiful sunrise.",
+                    "To avoid the heavy traffic on the road.",
+                    "To meet the podcast host."
+                ],
+                answer: 1,
+                explanation: "Lina menyebutkan: 'We woke up at 3:00 AM to catch the sunrise.'"
+            },
+            {
+                id: 5,
+                topic: "Spoken Recount Texts",
+                difficulty: "Medium",
+                cognitive: "LOTS",
+                context: "Dialogue 2 (Podcast Transcript):\nHost: 'Welcome back! Today, Lina is telling us about her journey to Mount Bromo.'\nLina: 'We woke up at 3:00 AM to catch the sunrise. While we were walking up the steep trail, the cold wind was blowing fiercely. However, when the sun finally rose above the horizon, the view was unforgettable!'",
+                imageUrl: "",
+                prompt: "What was happening while Lina and her group were walking up the steep trail?",
+                options: [
+                    "It started raining heavily.",
+                    "The cold wind was blowing fiercely.",
+                    "The sun was setting behind the hills.",
+                    "Many tourists were taking group photos."
+                ],
+                answer: 1,
+                explanation: "Teks dialog menyatakan: 'While we were walking up the steep trail, the cold wind was blowing fiercely.'"
+            },
+            {
+                id: 6,
+                topic: "Spoken Recount Texts",
+                difficulty: "Hard",
+                cognitive: "HOTS",
+                context: "Dialogue 2 (Podcast Transcript):\nHost: 'Welcome back! Today, Lina is telling us about her journey to Mount Bromo.'\nLina: 'We woke up at 3:00 AM to catch the sunrise. While we were walking up the steep trail, the cold wind was blowing fiercely. However, when the sun finally rose above the horizon, the view was unforgettable!'",
+                imageUrl: "",
+                prompt: "What is the main intention of Lina recounting her experience on the podcast?",
+                options: [
+                    "To complain about the terrible weather on Mount Bromo.",
+                    "To share a memorable personal travel experience with listeners.",
+                    "To persuade listeners never to wake up at 3 AM.",
+                    "To describe the geological formation of volcanic mountains."
+                ],
+                answer: 1,
+                explanation: "Tujuan recount text lisan ini adalah menceritakan kembali pengalaman perjalanan yang berkesan (memorable journey) kepada para pendengar."
+            },
+            {
+                id: 7,
+                topic: "Spoken Recount Texts",
+                difficulty: "Easy",
+                cognitive: "LOTS",
+                context: "Dialogue 3:\nGalang: 'Did you hear what happened to Monita on her train journey to Yogyakarta?'\nPipit: 'No, what happened?'\nGalang: 'She was reading her novel when the train suddenly stopped due to a power breakdown.'",
+                imageUrl: "",
+                prompt: "Where was Monita heading when the incident occurred?",
+                options: [
+                    "Yogyakarta",
+                    "Jakarta",
+                    "Bandung",
+                    "Surabaya"
+                ],
+                answer: 0,
+                explanation: "Galang menyebutkan: 'Monita on her train journey to Yogyakarta'."
+            },
+            {
+                id: 8,
+                topic: "Spoken Recount Texts",
+                difficulty: "Medium",
+                cognitive: "LOTS",
+                context: "Dialogue 3:\nGalang: 'Did you hear what happened to Monita on her train journey to Yogyakarta?'\nPipit: 'No, what happened?'\nGalang: 'She was reading her novel when the train suddenly stopped due to a power breakdown.'",
+                imageUrl: "",
+                prompt: "Why did the train stop unexpectedly?",
+                options: [
+                    "Because of a heavy landslide.",
+                    "Due to a power breakdown.",
+                    "Because a animal crossed the track.",
+                    "To drop off extra passengers."
+                ],
+                answer: 1,
+                explanation: "Galang menjelaskan: 'when the train suddenly stopped due to a power breakdown.'"
+            },
+            {
+                id: 9,
+                topic: "Spoken Recount Texts",
+                difficulty: "Medium",
+                cognitive: "HOTS",
+                context: "Dialogue 4:\nDayu: 'I missed the school bus yesterday because I woke up late.'\nUdin: 'Oh dear! How did you get to school then?'\nDayu: 'My father was driving his car to work, so he gave me a lift. Luckily, I arrived just in time before the gate locked!'",
+                imageUrl: "",
+                prompt: "How did Dayu feel about her father driving to work yesterday?",
+                options: [
+                    "Disappointed because she had to walk.",
+                    "Relieved because he helped her arrive on time.",
+                    "Angry because he drove too slowly.",
+                    "Confused because he took a wrong turning."
+                ],
+                answer: 1,
+                explanation: "Dayu mengatakan 'Luckily, I arrived just in time!', yang menunjukkan rasa lega (relieved) atas bantuan ayahnya."
+            },
+            {
+                id: 10,
+                topic: "Spoken Recount Texts",
+                difficulty: "Hard",
+                cognitive: "HOTS",
+                context: "Dialogue 4:\nDayu: 'I missed the school bus yesterday because I woke up late.'\nUdin: 'Oh dear! How did you get to school then?'\nDayu: 'My father was driving his car to work, so he gave me a lift. Luckily, I arrived just in time before the gate locked!'",
+                imageUrl: "",
+                prompt: "What lesson can be learned from Dayu's spoken story?",
+                options: [
+                    "Missing the school bus is always fun.",
+                    "Going to sleep early helps prevent waking up late.",
+                    "School gates are always locked early in the morning.",
+                    "Fathers always drive faster than school buses."
+                ],
+                answer: 1,
+                explanation: "Secara tersirat (HOTS), bangun terlambat menyebabkan kepanikan, sehingga pelajaran utamanya adalah tidur lebih awal agar tidak terlambat bangun."
+            },
+
+            // ---------- PAST CONTINUOUS TENSE (Soal 11 - 20) ----------
+            {
+                id: 11,
+                topic: "Past Continuous Tense",
+                difficulty: "Easy",
+                cognitive: "LOTS",
+                context: "Sentence Context:\n'While the students ________ (take) photos of the old museum, the tour guide was explaining its history.'",
+                imageUrl: "",
+                prompt: "Choose the correct form of the verb to complete the Past Continuous sentence.",
+                options: [
+                    "are taking",
+                    "were taking",
+                    "was taking",
+                    "took"
+                ],
+                answer: 1,
+                explanation: "Subjek 'the students' adalah jamak (plural), sehingga bentuk Past Continuous Tense-nya menggunakan 'were taking'."
+            },
+            {
+                id: 12,
+                topic: "Past Continuous Tense",
+                difficulty: "Easy",
+                cognitive: "LOTS",
+                context: "Sentence Context:\n'My father ________ (drive) the car through the village when it started to rain heavily.'",
+                imageUrl: "",
+                prompt: "Fill in the blank with the appropriate Past Continuous verb.",
+                options: [
+                    "was driving",
+                    "were driving",
+                    "is driving",
+                    "drove"
+                ],
+                answer: 0,
+                explanation: "Subjek 'My father' tunggal (singular), maka auxiliary yang tepat adalah 'was' -> 'was driving'."
+            },
+            {
+                id: 13,
+                topic: "Past Continuous Tense",
+                difficulty: "Medium",
+                cognitive: "LOTS",
+                context: "Sentence Context:\n'When I arrived at the beach camp, my friends ________ marshmallows around the campfire.'",
+                imageUrl: "",
+                prompt: "Select the correct verb phrase to indicate an action in progress in the past.",
+                options: [
+                    "were roasting",
+                    "was roasting",
+                    "are roasting",
+                    "roasted"
+                ],
+                answer: 0,
+                explanation: "Subjek 'my friends' jamak, menunjukkan aksi sedang berlangsung di masa lalu ('were roasting')."
+            },
+            {
+                id: 14,
+                topic: "Past Continuous Tense",
+                difficulty: "Medium",
+                cognitive: "HOTS",
+                context: "Situation:\n'At 8 PM last night, Edo was studying English while his sister was watching TV.'",
+                imageUrl: "",
+                prompt: "What does the sentence above imply about the two actions?",
+                options: [
+                    "Edo finished studying before his sister watched TV.",
+                    "Both actions were happening simultaneously in the past.",
+                    "Edo's sister interrupted his studying session.",
+                    "Edo was watching TV with his sister at 8 PM."
+                ],
+                answer: 1,
+                explanation: "Penggunaan 'was studying ... while ... was watching' menunjukkan dua kegiatan yang terjadi secara bersamaan (simultaneous) di masa lalu."
+            },
+            {
+                id: 15,
+                topic: "Past Continuous Tense",
+                difficulty: "Easy",
+                cognitive: "LOTS",
+                context: "Sentence Context:\n'We ________ (not / sleep) when the earthquake shook our tents in the camping area.'",
+                imageUrl: "",
+                prompt: "Which negative form of Past Continuous correctly completes the sentence?",
+                options: [
+                    "was not sleeping",
+                    "were not sleeping",
+                    "did not sleeping",
+                    "are not sleeping"
+                ],
+                answer: 1,
+                explanation: "Subjek 'We' menggunakan 'were not sleeping' untuk bentuk negatif Past Continuous Tense."
+            },
+            {
+                id: 16,
+                topic: "Past Continuous Tense",
+                difficulty: "Medium",
+                cognitive: "LOTS",
+                context: "Sentence Context:\n'________ Monita ________ (write) her travel journal when you called her last night?'",
+                imageUrl: "",
+                prompt: "Complete the interrogative sentence in the Past Continuous Tense.",
+                options: [
+                    "Was – writing",
+                    "Were – writing",
+                    "Did – write",
+                    "Is – writing"
+                ],
+                answer: 0,
+                explanation: "Subjek 'Monita' (singular/orang ketiga tunggal) menggunakan rumus kalimat tanya: Was + Monita + writing?"
+            },
+            {
+                id: 17,
+                topic: "Past Continuous Tense",
+                difficulty: "Hard",
+                cognitive: "HOTS",
+                context: "Short Story Extract:\n'The sun was setting behind the hills. The birds were flying back to their nests, and the monkeys were swinging between tree branches as our boat glided along the river.'",
+                imageUrl: "",
+                prompt: "Why did the author use the Past Continuous Tense in this paragraph?",
+                options: [
+                    "To explain a series of quick, completed background actions.",
+                    "To create a descriptive atmosphere of continuous ongoing background activity.",
+                    "To show actions that will happen in the future journey.",
+                    "To list habits that the animals perform every single day."
+                ],
+                answer: 1,
+                explanation: "Past Continuous Tense sering digunakan dalam recount text untuk membangun suasana latar belakang (background description) yang sedang terjadi."
+            },
+            {
+                id: 18,
+                topic: "Past Continuous Tense",
+                difficulty: "Medium",
+                cognitive: "LOTS",
+                context: "Sentence Pair:\nAction A: I was walking past the old town hall.\nAction B: I dropped my water bottle.",
+                imageUrl: "",
+                prompt: "Combine the two actions correctly using 'when' or 'while'.",
+                options: [
+                    "I walked past the old town hall while I was dropping my water bottle.",
+                    "While I was walking past the old town hall, I dropped my water bottle.",
+                    "I was dropping my water bottle when I was walking past the old town hall.",
+                    "When I was dropping my water bottle, I walked past the old town hall."
+                ],
+                answer: 1,
+                explanation: "Aksi panjang ('was walking') menggunakan 'while', dan disela oleh aksi pendek ('dropped'). 'While I was walking..., I dropped...'"
+            },
+            {
+                id: 19,
+                topic: "Past Continuous Tense",
+                difficulty: "Hard",
+                cognitive: "HOTS",
+                context: "Context Statement:\n'While the tour guide ________ (explain) the map, a monkey suddenly snatched Edo's hat.'",
+                imageUrl: "",
+                prompt: "Choose the correct grammar combination to show an interrupted action.",
+                options: [
+                    "explained",
+                    "was explaining",
+                    "is explaining",
+                    "explains"
+                ],
+                answer: 1,
+                explanation: "Aksi yang sedang berlangsung saat aksi lain terjadi secara mendadak menggunakan Past Continuous ('was explaining')."
+            },
+            {
+                id: 20,
+                topic: "Past Continuous Tense",
+                difficulty: "Easy",
+                cognitive: "LOTS",
+                context: "Sentence Context:\n'Look at the underline: They <u class=\"bg-yellow-200 px-1\">was walking</u> along the beach when they saw dolphins.'",
+                imageUrl: "",
+                prompt: "Identify the grammatical error in the sentence above.",
+                options: [
+                    "'was walking' should be replaced with 'were walking'.",
+                    "'when' should be replaced with 'because'.",
+                    "'saw' should be replaced with 'see'.",
+                    "'beach' should be replaced with 'beaches'."
+                ],
+                answer: 0,
+                explanation: "Subjek 'They' harus menggunakan 'were walking', bukan 'was walking'."
+            },
+
+            // ---------- WRITTEN RECOUNT TEXTS (Soal 21 - 30) ----------
+            {
+                id: 21,
+                topic: "Written Recount Texts",
+                difficulty: "Easy",
+                cognitive: "LOTS",
+                context: "Text 1 (My Journey to Komodo Island):\nLast June, my family and I went on a trip to Komodo National Park. On the first day, we boarded a traditional wooden boat from Labuan Bajo. While the boat was sailing across the calm blue sea, we spotted several flying fish leaping out of the water.\nWhen we arrived at Rinca Island, a ranger guided us through the savanna. Suddenly, we saw a huge Komodo dragon resting under a shade tree. It was an incredible sight that I will treasure forever.",
+                imageUrl: "",
+                prompt: "When did the writer and their family go to Komodo National Park?",
+                options: [
+                    "Last June",
+                    "Last December",
+                    "Two years ago",
+                    "Next holiday"
+                ],
+                answer: 0,
+                explanation: "Kalimat pertama teks menyebutkan secara jelas: 'Last June, my family and I went on a trip...'"
+            },
+            {
+                id: 22,
+                topic: "Written Recount Texts",
+                difficulty: "Medium",
+                cognitive: "LOTS",
+                context: "Text 1 (My Journey to Komodo Island):\nLast June, my family and I went on a trip to Komodo National Park. On the first day, we boarded a traditional wooden boat from Labuan Bajo. While the boat was sailing across the calm blue sea, we spotted several flying fish leaping out of the water.\nWhen we arrived at Rinca Island, a ranger guided us through the savanna. Suddenly, we saw a huge Komodo dragon resting under a shade tree. It was an incredible sight that I will treasure forever.",
+                imageUrl: "",
+                prompt: "What did the writer see while the boat was sailing across the sea?",
+                options: [
+                    "Dolphins racing the boat.",
+                    "Flying fish leaping out of the water.",
+                    "Whales blowing water.",
+                    "Sea turtles swimming near Rinca Island."
+                ],
+                answer: 1,
+                explanation: "Paragraf pertama menyatakan: 'While the boat was sailing across the calm blue sea, we spotted several flying fish leaping out of the water.'"
+            },
+            {
+                id: 23,
+                topic: "Written Recount Texts",
+                difficulty: "Hard",
+                cognitive: "HOTS",
+                context: "Text 1 (My Journey to Komodo Island):\nLast June, my family and I went on a trip to Komodo National Park. On the first day, we boarded a traditional wooden boat from Labuan Bajo. While the boat was sailing across the calm blue sea, we spotted several flying fish leaping out of the water.\nWhen we arrived at Rinca Island, a ranger guided us through the savanna. Suddenly, we saw a huge Komodo dragon resting under a shade tree. It was an incredible sight that I will treasure forever.",
+                imageUrl: "",
+                prompt: "What is the main idea of the second paragraph?",
+                options: [
+                    "The process of renting a wooden boat in Labuan Bajo.",
+                    "The writer's encounter with a giant Komodo dragon on Rinca Island.",
+                    "The dangerous waves encountered in the middle of the ocean.",
+                    "The physical description of Rinca Island's trees."
+                ],
+                answer: 1,
+                explanation: "Paragraf kedua berfokus pada kedatangan di Rinca Island dan pengalaman melihat Komodo raksasa dengan panduan ranger."
+            },
+            {
+                id: 24,
+                topic: "Written Recount Texts",
+                difficulty: "Medium",
+                cognitive: "LOTS",
+                context: "Text 1 (My Journey to Komodo Island):\n'Suddenly, we saw a huge Komodo dragon resting under a shade tree. It was an <u class=\"bg-yellow-200 px-1\">incredible</u> sight that I will treasure forever.'",
+                imageUrl: "",
+                prompt: "The underlined word 'incredible' in the text is closest in meaning to...",
+                options: [
+                    "amazing",
+                    "boring",
+                    "frightening",
+                    "ordinary"
+                ],
+                answer: 0,
+                explanation: "Kata 'incredible' berarti luar biasa/menakjubkan, yang sinonim dengan 'amazing'."
+            },
+            {
+                id: 25,
+                topic: "Written Recount Texts",
+                difficulty: "Easy",
+                cognitive: "LOTS",
+                context: "Text 2 (An Unfortunate Hiking Trip):\nTwo weeks ago, Andre and his classmates went camping on Mount Gede. They started hiking at 6 AM. Everything went smooth until mid-afternoon. While they were setting up their tents near the camping site, a sudden heavy downpour started.\nUnfortunately, Andre forgot to cover his backpack with a rain cover. As a result, all his dry clothes and sleeping bag got completely soaked. He had to borrow a jacket from his friend to stay warm during the cold night.",
+                imageUrl: "",
+                prompt: "Who did Andre go camping with on Mount Gede?",
+                options: [
+                    "His parents and siblings",
+                    "His classmates",
+                    "His scout leader alone",
+                    "Local tour guides"
+                ],
+                answer: 1,
+                explanation: "Kalimat pertama menyatakan: 'Andre and his classmates went camping on Mount Gede.'"
+            },
+            {
+                id: 26,
+                topic: "Written Recount Texts",
+                difficulty: "Medium",
+                cognitive: "LOTS",
+                context: "Text 2 (An Unfortunate Hiking Trip):\nTwo weeks ago, Andre and his classmates went camping on Mount Gede. They started hiking at 6 AM. Everything went smooth until mid-afternoon. While they were setting up their tents near the camping site, a sudden heavy downpour started.\nUnfortunately, Andre forgot to cover his backpack with a rain cover. As a result, all his dry clothes and sleeping bag got completely soaked. He had to borrow a jacket from his friend to stay warm during the cold night.",
+                imageUrl: "",
+                prompt: "Why did Andre's clothes and sleeping bag get soaked?",
+                options: [
+                    "He dropped his backpack into a river.",
+                    "He forgot to cover his backpack with a rain cover during the heavy downpour.",
+                    "His tent leaked during the night.",
+                    "He washed them in the campsite lake."
+                ],
+                answer: 1,
+                explanation: "Paragraf kedua menjelaskan: 'Andre forgot to cover his backpack with a rain cover. As a result, all his dry clothes... got completely soaked.'"
+            },
+            {
+                id: 27,
+                topic: "Written Recount Texts",
+                difficulty: "Hard",
+                cognitive: "HOTS",
+                context: "Text 2 (An Unfortunate Hiking Trip):\nTwo weeks ago, Andre and his classmates went camping on Mount Gede. They started hiking at 6 AM. Everything went smooth until mid-afternoon. While they were setting up their tents near the camping site, a sudden heavy downpour started.\nUnfortunately, Andre forgot to cover his backpack with a rain cover. As a result, all his dry clothes and sleeping bag got completely soaked. He had to borrow a jacket from his friend to stay warm during the cold night.",
+                imageUrl: "",
+                prompt: "What can we conclude about Andre's friend who lent him the jacket?",
+                options: [
+                    "He was careless and unorganized.",
+                    "He was supportive and well-prepared for bad weather.",
+                    "He complained about sharing his belongings.",
+                    "He also forgot his rain cover."
+                ],
+                answer: 1,
+                explanation: "Teman Andre memiliki jaket ekstra untuk dipinjamkan di tengah cuaca dingin, menunjukkan ia peduli/saling mendukung (supportive) dan bersiap dengan baik (well-prepared)."
+            },
+            {
+                id: 28,
+                topic: "Written Recount Texts",
+                difficulty: "Medium",
+                cognitive: "LOTS",
+                context: "Text 3 (A Visit to the Botanical Garden):\nLast month, Class 9B visited the Bogor Botanical Garden for a science field trip. First, we gathered at the main gate and received a map from our teacher. Then, we walked around the garden to observe rare orchid species.\nWhile we were taking notes under a giant banyan tree, a group of friendly squirrels came down from the branches. We took many pictures before heading home at 3 PM.",
+                imageUrl: "",
+                prompt: "Identify the correct chronological order of events from Text 3.",
+                options: [
+                    "Observed orchids -> Gathered at main gate -> Took photos of squirrels -> Went home.",
+                    "Gathered at main gate -> Observed orchids -> Took photos of squirrels -> Went home.",
+                    "Took photos of squirrels -> Gathered at main gate -> Observed orchids -> Went home.",
+                    "Went home -> Gathered at main gate -> Observed orchids -> Took photos of squirrels."
+                ],
+                answer: 1,
+                explanation: "Urutan kronologis recount text: 1. Gathered at main gate, 2. Observed orchids, 3. Took photos of squirrels, 4. Went home at 3 PM."
+            },
+            {
+                id: 29,
+                topic: "Written Recount Texts",
+                difficulty: "Hard",
+                cognitive: "HOTS",
+                context: "Text 3 (A Visit to the Botanical Garden):\nLast month, Class 9B visited the Bogor Botanical Garden for a science field trip. First, we gathered at the main gate and received a map from our teacher. Then, we walked around the garden to observe rare orchid species.\nWhile we were taking notes under a giant banyan tree, a group of friendly squirrels came down from the branches. We took many pictures before heading home at 3 PM.",
+                imageUrl: "",
+                prompt: "What is the social function of Text 3?",
+                options: [
+                    "To describe the botanical steps in planting orchid flowers.",
+                    "To recount a past educational trip to Bogor Botanical Garden.",
+                    "To persuade readers to buy tickets for Bogor Botanical Garden.",
+                    "To explain the lifecycle of banyan trees and squirrels."
+                ],
+                answer: 1,
+                explanation: "Fungsi sosial recount text adalah menceritakan kejadian/pengalaman perjalanan pendidikan di masa lalu (to recount a past educational trip)."
+            },
+            {
+                id: 30,
+                topic: "Written Recount Texts",
+                difficulty: "Hard",
+                cognitive: "HOTS",
+                context: "General Recount Structure Question:\nReview the text elements below:\n1. Re-orientation (Personal comments / closure)\n2. Orientation (Who, where, when)\n3. Series of Events (Chronological actions)",
+                imageUrl: "",
+                prompt: "Which sequence reflects the generic structure of a standard Written Recount Text?",
+                options: [
+                    "1 - 2 - 3",
+                    "2 - 3 - 1",
+                    "3 - 2 - 1",
+                    "2 - 1 - 3"
+                ],
+                answer: 1,
+                explanation: "Struktur generik recount text secara runtut adalah: Orientation (2) -> Series of Events (3) -> Re-orientation (1)."
+            }
+        ];
+
+        // =========================================================================
+        // 3. STATE VARIABLES & APP ENGINE
+        // =========================================================================
+        let studentData = {
+            nama: "",
+            kelas: "",
+            violations: 0,
+            answers: new Array(questionsData.length).fill(null), // Store selected indices 0..3
+            timeRemaining: TOTAL_QUIZ_TIME,
+            timerInterval: null
+        };
+
+        let currentQuestionIndex = 0;
+        let isQuizFinished = false;
+
+        // Sound generator using Web Audio API (No external sound files required)
+        function playBeepSound(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+
+                if (type === 'warning') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.value = 440;
+                    gain.gain.setValueAtTime(0.3, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.3);
+                } else if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.value = 800;
+                    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.05);
+                }
+            } catch (e) {
+                // Audio context not allowed without user gesture
+            }
+        }
+
+        // =========================================================================
+        // 4. CHEATING DETECTION & ANTI-CHEAT SYSTEM
+        // =========================================================================
+        function registerAntiCheatListeners() {
+            // Detect tab switching or window minimize
+            document.addEventListener("visibilitychange", () => {
+                if (document.hidden && !isQuizFinished && studentData.nama !== "") {
+                    triggerViolation("Berpindah tab atau membuka aplikasi lain.");
+                }
+            });
+
+            // Detect losing window focus
+            window.addEventListener("blur", () => {
+                if (!isQuizFinished && studentData.nama !== "") {
+                    triggerViolation("Meninggalkan jendela ujian.");
+                }
+            });
+        }
+
+        function triggerViolation(reason) {
+            studentData.violations++;
+            document.getElementById("violation-count").innerText = studentData.violations;
+            playBeepSound('warning');
+
+            if (studentData.violations >= 3) {
+                alert(`PERINGATAN KECURANGAN TERAKHIR!\n\nAnda telah melakukan 3 kali pelanggaran: ${reason}\n\nSesuai aturan, sesi ujian Anda dihentikan dan dikembalikan ke layar awal.`);
+                resetToStartScreen();
+            } else {
+                alert(`PERINGATAN KECURANGAN (${studentData.violations}/3)!\n\nTerdeteksi: ${reason}\nDilarang berpindah halaman selama tes berlangsung! Jika mencapai 3 kali pelanggaran, ujian akan otomatis dibatalkan.`);
+            }
+        }
+
+        function resetToStartScreen() {
+            clearInterval(studentData.timerInterval);
+            isQuizFinished = false;
+            studentData = {
+                nama: "",
+                kelas: "",
+                violations: 0,
+                answers: new Array(questionsData.length).fill(null),
+                timeRemaining: TOTAL_QUIZ_TIME,
+                timerInterval: null
+            };
+
+            document.getElementById("violation-count").innerText = "0";
+            document.getElementById("login-form").reset();
+            
+            document.getElementById("quiz-screen").classList.add("hidden");
+            document.getElementById("result-screen").classList.add("hidden");
+            document.getElementById("quiz-status-bar").classList.add("hidden");
+            document.getElementById("login-screen").classList.remove("hidden");
+        }
+
+        // =========================================================================
+        // 5. LOGIN & TIMER HANDLERS
+        // =========================================================================
+        function handleStartQuiz(e) {
+            e.preventDefault();
+
+            const namaInput = document.getElementById("input-nama").value.trim();
+            const kelasInput = document.getElementById("input-kelas").value;
+            const passcodeInput = document.getElementById("input-passcode").value;
+
+            if (passcodeInput !== SYSTEM_PASSCODE) {
+                alert("Passcode yang Anda masukkan salah! Silakan tanyakan kepada guru pengampu.");
+                return;
+            }
+
+            studentData.nama = namaInput;
+            studentData.kelas = kelasInput;
+            studentData.violations = 0;
+
+            // Hide Login Screen & Show Quiz Screen
+            document.getElementById("login-screen").classList.add("hidden");
+            document.getElementById("quiz-screen").classList.remove("hidden");
+            document.getElementById("quiz-status-bar").classList.remove("hidden");
+
+            // Start Timer & Anti Cheat
+            startQuizTimer();
+            registerAntiCheatListeners();
+
+            // Load Question 0
+            currentQuestionIndex = 0;
+            renderCurrentQuestion();
+            buildPaletteGrid();
+        }
+
+        function startQuizTimer() {
+            updateTimerDisplay();
+            studentData.timerInterval = setInterval(() => {
+                studentData.timeRemaining--;
+                updateTimerDisplay();
+
+                if (studentData.timeRemaining <= 0) {
+                    clearInterval(studentData.timerInterval);
+                    alert("Waktu pengerjaan telah habis! Jawaban Anda akan otomatis dikirim.");
+                    finishAndCalculateScore();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(studentData.timeRemaining / 60);
+            const seconds = studentData.timeRemaining % 60;
+            const timerEl = document.getElementById("timer-display");
+            
+            const formatted = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+            timerEl.innerText = formatted;
+
+            // Visual warning when time is less than 5 minutes
+            if (studentData.timeRemaining < 300) {
+                timerEl.classList.add("animate-pulse-fast", "text-rose-400");
+            }
+        }
+
+        // =========================================================================
+        // 6. QUESTION RENDERING & NAVIGATION
+        // =========================================================================
+        function renderCurrentQuestion() {
+            const q = questionsData[currentQuestionIndex];
+
+            // Question Header Info
+            document.getElementById("current-q-num").innerText = `${currentQuestionIndex + 1}`;
+            document.getElementById("question-difficulty-tag").innerText = `${q.topic} | ${q.difficulty} (${q.cognitive})`;
+
+            // Update Progress Bar Fill
+            const progressPercent = ((currentQuestionIndex + 1) / questionsData.length) * 100;
+            document.getElementById("progress-bar-fill").style.width = `${progressPercent}%`;
+
+            // Render Image (if available)
+            const imgContainer = document.getElementById("q-image-container");
+            const imgEl = document.getElementById("q-image");
+            if (q.imageUrl && q.imageUrl.trim() !== "") {
+                imgEl.src = q.imageUrl;
+                imgContainer.classList.remove("hidden");
+            } else {
+                imgContainer.classList.add("hidden");
+            }
+
+            // Render Text Context / Dialogue
+            document.getElementById("q-text-context").innerHTML = q.context;
+
+            // Render Prompt
+            document.getElementById("q-prompt").innerText = `${currentQuestionIndex + 1}. ${q.prompt}`;
+
+            // Render Options
+            const optionsContainer = document.getElementById("options-container");
+            optionsContainer.innerHTML = "";
+
+            const optionLabels = ["A", "B", "C", "D"];
+            q.options.forEach((optText, optIdx) => {
+                const isSelected = studentData.answers[currentQuestionIndex] === optIdx;
+                
+                const optBtn = document.createElement("button");
+                optBtn.type = "button";
+                optBtn.onclick = () => selectAnswer(optIdx);
+                optBtn.className = `w-full text-left p-3.5 rounded-2xl border transition flex items-center space-x-3 text-sm ${
+                    isSelected 
+                    ? "bg-indigo-50 border-indigo-600 text-indigo-900 font-semibold shadow-sm" 
+                    : "bg-white border-slate-200 hover:border-slate-300 text-slate-700"
+                }`;
+
+                optBtn.innerHTML = `
+                    <span class="w-8 h-8 rounded-xl flex items-center justify-center font-bold text-xs ${
+                        isSelected ? "bg-indigo-600 text-white" : "bg-slate-100 text-slate-600"
+                    }">
+                        ${optionLabels[optIdx]}
+                    </span>
+                    <span class="flex-grow">${optText}</span>
+                `;
+
+                optionsContainer.appendChild(optBtn);
+            });
+
+            // Update Prev/Next Buttons
+            const btnPrev = document.getElementById("btn-prev");
+            const btnNext = document.getElementById("btn-next");
+            const btnFinish = document.getElementById("btn-finish");
+
+            btnPrev.disabled = (currentQuestionIndex === 0);
+
+            if (currentQuestionIndex === questionsData.length - 1) {
+                btnNext.classList.add("hidden");
+                btnFinish.classList.remove("hidden");
+            } else {
+                btnNext.classList.remove("hidden");
+                btnFinish.classList.add("hidden");
+            }
+
+            // Sync Palette Modal state
+            updatePaletteGridState();
+        }
+
+        function selectAnswer(optIdx) {
+            playBeepSound('click');
+            studentData.answers[currentQuestionIndex] = optIdx;
+            renderCurrentQuestion();
+        }
+
+        function navigateQuestion(direction) {
+            playBeepSound('click');
+            const targetIdx = currentQuestionIndex + direction;
+            if (targetIdx >= 0 && targetIdx < questionsData.length) {
+                currentQuestionIndex = targetIdx;
+                renderCurrentQuestion();
+            }
+        }
+
+        function jumpToQuestion(idx) {
+            playBeepSound('click');
+            currentQuestionIndex = idx;
+            renderCurrentQuestion();
+            togglePaletteModal(false);
+        }
+
+        // =========================================================================
+        // 7. QUESTION PALETTE GRID
+        // =========================================================================
+        function buildPaletteGrid() {
+            const grid = document.getElementById("palette-grid");
+            grid.innerHTML = "";
+
+            questionsData.forEach((_, idx) => {
+                const btn = document.createElement("button");
+                btn.id = `palette-btn-${idx}`;
+                btn.onclick = () => jumpToQuestion(idx);
+                btn.className = "w-10 h-10 rounded-xl font-bold text-xs flex items-center justify-center transition border";
+                btn.innerText = idx + 1;
+                grid.appendChild(btn);
+            });
+
+            updatePaletteGridState();
+        }
+
+        function updatePaletteGridState() {
+            questionsData.forEach((_, idx) => {
+                const btn = document.getElementById(`palette-btn-${idx}`);
+                if (!btn) return;
+
+                const isAnswered = studentData.answers[idx] !== null;
+                const isCurrent = idx === currentQuestionIndex;
+
+                if (isCurrent) {
+                    btn.className = "w-10 h-10 rounded-xl font-extrabold text-xs flex items-center justify-center transition border-2 border-indigo-600 bg-indigo-100 text-indigo-800 shadow-sm";
+                } else if (isAnswered) {
+                    btn.className = "w-10 h-10 rounded-xl font-bold text-xs flex items-center justify-center transition border border-emerald-400 bg-emerald-50 text-emerald-700";
+                } else {
+                    btn.className = "w-10 h-10 rounded-xl font-medium text-xs flex items-center justify-center transition border border-slate-200 bg-slate-50 text-slate-600 hover:bg-slate-100";
+                }
+            });
+        }
+
+        function togglePaletteModal(show) {
+            const modal = document.getElementById("palette-modal");
+            if (show) modal.classList.remove("hidden");
+            else modal.classList.add("hidden");
+        }
+
+        function toggleGasModal(show) {
+            const modal = document.getElementById("gas-modal");
+            if (show) modal.classList.remove("hidden");
+            else modal.classList.add("hidden");
+        }
+
+        function saveGasUrlFromModal() {
+            const newUrl = document.getElementById("input-gas-url-modal").value.trim();
+            if (newUrl !== "") {
+                GAS_WEB_APP_URL = newUrl;
+                alert("URL Web App GAS berhasil diperbarui!");
+                toggleGasModal(false);
+            }
+        }
+
+        // =========================================================================
+        // 8. FINISH QUIZ & SCORING LOGIC
+        // =========================================================================
+        function confirmFinishQuiz() {
+            const unansweredCount = studentData.answers.filter(a => a === null).length;
+            let confirmMsg = "Apakah Anda yakin ingin menyelesaikan dan mengirimkan jawaban?";
+            if (unansweredCount > 0) {
+                confirmMsg = `Masih ada ${unansweredCount} soal yang belum Anda jawab!\n\nYakin tetap ingin menyelesaikan ujian?`;
+            }
+
+            if (confirm(confirmMsg)) {
+                finishAndCalculateScore();
+            }
+        }
+
+        function finishAndCalculateScore() {
+            isQuizFinished = true;
+            clearInterval(studentData.timerInterval);
+
+            // Hide Quiz & Show Result Screen
+            document.getElementById("quiz-screen").classList.add("hidden");
+            document.getElementById("quiz-status-bar").classList.add("hidden");
+            document.getElementById("result-screen").classList.remove("hidden");
+
+            // Compute Correct / Wrong
+            let correctCount = 0;
+            let wrongNumbers = [];
+
+            questionsData.forEach((q, idx) => {
+                if (studentData.answers[idx] === q.answer) {
+                    correctCount++;
+                } else {
+                    wrongNumbers.push(idx + 1);
+                }
+            });
+
+            const totalQuestions = questionsData.length;
+            const wrongCount = totalQuestions - correctCount;
+            const finalScore = Math.round((correctCount / totalQuestions) * 100);
+
+            // Display Summary
+            document.getElementById("final-score-val").innerText = finalScore;
+            document.getElementById("final-correct-val").innerText = correctCount;
+            document.getElementById("final-wrong-val").innerText = wrongCount;
+            document.getElementById("final-violations-val").innerText = studentData.violations;
+
+            document.getElementById("res-student-name").innerText = studentData.nama;
+            document.getElementById("res-student-class").innerText = studentData.kelas;
+            document.getElementById("res-wrong-list").innerText = wrongNumbers.length > 0 ? `#${wrongNumbers.join(", #")}` : "Tidak Ada (Sempurna)";
+
+            // Render Wrong Questions Review
+            renderWrongReview(wrongNumbers);
+
+            // Send Results to Google Apps Script (GAS)
+            sendDataToGAS(finalScore, correctCount, wrongCount, wrongNumbers);
+        }
+
+        function renderWrongReview(wrongNumbers) {
+            const reviewBox = document.getElementById("wrong-questions-review");
+            reviewBox.innerHTML = "";
+
+            if (wrongNumbers.length === 0) {
+                reviewBox.innerHTML = `<p class="text-xs text-emerald-600 font-semibold bg-emerald-50 p-3 rounded-xl border border-emerald-100">Selamat! Seluruh jawaban Anda benar.</p>`;
+                return;
+            }
+
+            const optionLabels = ["A", "B", "C", "D"];
+
+            wrongNumbers.forEach(qNum => {
+                const qIdx = qNum - 1;
+                const q = questionsData[qIdx];
+                const userChoice = studentData.answers[qIdx];
+
+                const userText = userChoice !== null ? `${optionLabels[userChoice]}. ${q.options[userChoice]}` : "Tidak Dijawab";
+                const correctText = `${optionLabels[q.answer]}. ${q.options[q.answer]}`;
+
+                const card = document.createElement("div");
+                card.className = "bg-slate-50 border border-slate-200 p-3 rounded-2xl text-xs space-y-1.5";
+                card.innerHTML = `
+                    <div class="font-bold text-slate-800 flex justify-between">
+                        <span>Soal No. ${qNum} (${q.topic})</span>
+                        <span class="text-rose-500 font-semibold">${q.difficulty}</span>
+                    </div>
+                    <p class="text-slate-600 italic border-l-2 border-indigo-400 pl-2 my-1">${q.prompt}</p>
+                    <div class="text-rose-600 font-medium">Jawaban Anda: <span class="font-bold">${userText}</span></div>
+                    <div class="text-emerald-700 font-medium">Jawaban Benar: <span class="font-bold">${correctText}</span></div>
+                    <div class="text-slate-500 bg-white p-2 rounded-xl border border-slate-200 mt-1">
+                        <strong>Pembahasan:</strong> ${q.explanation}
+                    </div>
+                `;
+                reviewBox.appendChild(card);
+            });
+        }
+
+        // =========================================================================
+        // 9. GOOGLE APPS SCRIPT HTTP POST SYNC
+        // =========================================================================
+        function sendDataToGAS(score, correct, wrong, wrongNumbers) {
+            const statusBadge = document.getElementById("gas-sync-status");
+
+            if (!GAS_WEB_APP_URL || GAS_WEB_APP_URL.includes("EXAMPLE_REPLACE")) {
+                statusBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-amber-100 text-amber-800";
+                statusBadge.innerText = "GAS URL Belum Dikonfigurasi Guru";
+                return;
+            }
+
+            statusBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-indigo-100 text-indigo-700 animate-pulse";
+            statusBadge.innerText = "Mengirim data...";
+
+            const payload = {
+                timestamp: new Date().toLocaleString("id-ID"),
+                nama: studentData.nama,
+                kelas: studentData.kelas,
+                benar: correct,
+                salah: wrong,
+                skor: score,
+                pelanggaran: studentData.violations,
+                soalSalah: wrongNumbers.length > 0 ? wrongNumbers.join(", ") : "Nihil"
+            };
+
+            fetch(GAS_WEB_APP_URL, {
+                method: "POST",
+                mode: "no-cors", // Standard mode for Google Apps Script Web App endpoints
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(() => {
+                statusBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-emerald-100 text-emerald-800";
+                statusBadge.innerText = "Terdaftar di Google Sheets!";
+            })
+            .catch(err => {
+                console.error("Errors syncing with GAS:", err);
+                statusBadge.className = "text-xs font-bold px-2.5 py-1 rounded-full bg-rose-100 text-rose-800";
+                statusBadge.innerText = "Gagal Mengirim ke GAS";
+            });
+        }
+
+        // =========================================================================
+        // 10. INITIALIZATION ON WINDOW LOAD
+        // =========================================================================
+        window.onload = function() {
+            // Populate Modal Input with active GAS URL
+            document.getElementById("input-gas-url-modal").value = GAS_WEB_APP_URL;
+        };
+    </script>
+</body>
+</html>
